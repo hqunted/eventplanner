@@ -6,17 +6,16 @@ export const addMarker = (
   lng: number,
   map: L.Map,
   customIcon: L.Icon,
-  input?: boolean,
   title?: any,
   description?: any,
   time?: any
 ) => {
-  if (readUrlParams! === null)
-    input === true
-      ? L.marker([lat, lng], { icon: customIcon })
-          .bindPopup(
-            `<b>Title:</b>${title}<br><b>Description:</b> ${description}<br><b>Time:</b> ${time}<br>`
-          )
-          .addTo(map)
-      : L.marker([lat, lng], { icon: customIcon }).addTo(map);
+  if (readUrlParams())
+    L.marker([lat, lng], { icon: customIcon })
+      .bindPopup(
+        `<b>Title:</b>${title}<br><b>Description:</b> ${description}<br><b>Time:</b> ${time}<br>`
+      )
+      .addTo(map);
+
+  console.log(lat);
 };

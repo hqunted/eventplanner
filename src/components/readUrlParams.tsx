@@ -4,11 +4,12 @@ export const readUrlParams = () => {
   const lat = urlParams.get("lat");
   const lng = urlParams.get("lng");
 
-
   if (readParams) {
     const events = readParams.split("|");
+    const title = events[0];
+    const description = events[1];
+    const time = events[2];
 
-
-    return { events, lng, lat };
+    return { title, description, time, lng, lat };
   }
 };

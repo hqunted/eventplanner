@@ -5,11 +5,12 @@ import { readUrlParams } from "./readUrlParams";
 
 export const Map = () => {
   const [pickedEvents, setPickedEvents] = useState<string[]>([]);
-
+  
   const latString = readUrlParams()?.lat;
   const lngString = readUrlParams()?.lng;
-  const events = readUrlParams()?.events;
-  
+  const urlTitle = readUrlParams()?.title;
+  const urlDescription = readUrlParams()?.description;
+  const urlTime = readUrlParams()?.time;
   const urlLat = Number(latString);
   const urlLng = Number(lngString);
 
@@ -25,11 +26,18 @@ export const Map = () => {
       attribution:
         'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
     }).addTo(map);
-    addMarker(urlLat, urlLng, map, customIcon, false);
+    addMarker(
+      urlLat,
+      urlLng,
+      map,
+      customIcon,
+      urlTitle,
+      urlDescription,
+      urlTime
+    );
 
     const onMapClick = (pickedLocation: LeafletMouseEvent) => {
       const { lat, lng } = pickedLocation.latlng;
-
       const title = prompt("Enter Title:") || "";
       const description = prompt("Enter description:") || "";
       const time = prompt("Enter time:") || "";
@@ -37,16 +45,17 @@ export const Map = () => {
       if (title && description && time) {
         const event = `${title}|${description}|${time}`;
         const updatedPickedEvents = [...pickedEvents, event];
-        setPickedEvents(updatedPickedEvents);
 
+        setPickedEvents(updatedPickedEvents);
         const queryParams = new URLSearchParams({
           events: updatedPickedEvents.join(","),
           lat: String(lat),
           lng: String(lng),
         }).toString();
         const url = `${window.location.origin}${window.location.pathname}?${queryParams}`;
+
         window.prompt("Copy the shareable URL:", url);
-        addMarker(lat, lng, map, customIcon, true);
+        addMarker(lat, lng, map, customIcon, title, description, time);
       }
     };
 
