@@ -5,7 +5,7 @@ import { readUrlParams } from "./readUrlParams";
 
 export const Map = () => {
   const [pickedEvents, setPickedEvents] = useState<string[]>([]);
-  
+
   const latString = readUrlParams()?.lat;
   const lngString = readUrlParams()?.lng;
   const urlTitle = readUrlParams()?.title;
@@ -15,7 +15,25 @@ export const Map = () => {
   const urlLng = Number(lngString);
 
   useEffect(() => {
-    const map = L.map("map").setView([52.520008, 13.404954], 12);
+    const map = L.map("map").setView([0, 0], 12);
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+
+          map.setView([latitude, longitude], 12);
+
+          addMarker(latitude, longitude, map, customIcon);
+        },
+        (error) => {
+          console.error("Error getting the user's location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+
     const customIcon = L.icon({
       iconUrl: require("../assets/icons8-marker.gif"),
       iconSize: [24, 24],
@@ -38,6 +56,7 @@ export const Map = () => {
 
     const onMapClick = (pickedLocation: LeafletMouseEvent) => {
       const { lat, lng } = pickedLocation.latlng;
+
       const title = prompt("Enter Title:") || "";
       const description = prompt("Enter description:") || "";
       const time = prompt("Enter time:") || "";
@@ -53,10 +72,9 @@ export const Map = () => {
           lng: String(lng),
         }).toString();
         const url = `${window.location.origin}${window.location.pathname}?${queryParams}`;
-
         window.prompt("Copy the shareable URL:", url);
-        addMarker(lat, lng, map, customIcon, title, description, time);
       }
+      addMarker(lat, lng, map, customIcon, title, description, time);
     };
 
     map.on("click", onMapClick);
