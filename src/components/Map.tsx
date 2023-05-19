@@ -2,9 +2,24 @@ import React, { useEffect, useState } from "react";
 import L, { LeafletMouseEvent } from "leaflet";
 import { addMarker } from "./addMarker";
 import { readUrlParams } from "./readUrlParams";
+import mainModal from "./mainModal";
+import classNames from "classnames";
 
 export const Map = () => {
   const [pickedEvents, setPickedEvents] = useState<string[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const generateGoogleMapsLink = (latitude: number, longitude: number) => {
+    const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    console.log(mapsLink);
+    return mapsLink;
+  };
+  const modalIsVisible = () => {
+    setModalVisible(true);
+  };
+  const modalIsInvisible = () => {
+    setModalVisible(false);
+  };
 
   const latString = readUrlParams()?.lat;
   const lngString = readUrlParams()?.lng;
@@ -59,6 +74,8 @@ export const Map = () => {
     const onMapClick = (pickedLocation: LeafletMouseEvent) => {
       const { lat, lng } = pickedLocation.latlng;
 
+      pickedLocation ? modalIsVisible() : modalIsInvisible();
+
       const title = prompt("Enter Title:") || "";
       const description = prompt("Enter description:") || "";
       const time = prompt("Enter time:") || "";
@@ -75,9 +92,13 @@ export const Map = () => {
         }).toString();
         const url = `${window.location.origin}${window.location.pathname}?${queryParams}`;
         window.prompt("Copy the shareable URL:", url);
+
         L.marker([lat, lng], { icon: customIcon })
           .bindPopup(
-            `<b>Title:</b>${title}<br><b>Description:</b> ${description}<br><b>Time:</b> ${time}<br>`
+            `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
+              lat,
+              lng
+            )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br>`
           )
           .addTo(map);
       }
@@ -87,5 +108,14 @@ export const Map = () => {
     return () => {};
   }, []);
 
-  return <div id="map" style={{ height: "100vh" }} />;
+  return (
+    <div id="map" style={{ height: "100vh" }}>
+      <div
+        className={classNames(`${modalVisible ? "absolute" : ""} inset-0`)}
+        style={{ zIndex: 999 }}
+      >
+        {mainModal()}
+      </div>
+    </div>
+  );
 };
