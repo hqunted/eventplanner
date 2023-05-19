@@ -24,7 +24,9 @@ export const Map = () => {
 
           map.setView([latitude, longitude], 12);
 
-          addMarker(latitude, longitude, map, customIcon);
+          L.marker([latitude, longitude], { icon: customIcon })
+            .bindPopup(`YOU ARE HERE!`)
+            .addTo(map);
         },
         (error) => {
           console.error("Error getting the user's location:", error);
@@ -73,14 +75,16 @@ export const Map = () => {
         }).toString();
         const url = `${window.location.origin}${window.location.pathname}?${queryParams}`;
         window.prompt("Copy the shareable URL:", url);
+        L.marker([lat, lng], { icon: customIcon })
+          .bindPopup(
+            `<b>Title:</b>${title}<br><b>Description:</b> ${description}<br><b>Time:</b> ${time}<br>`
+          )
+          .addTo(map);
       }
-      addMarker(lat, lng, map, customIcon, title, description, time);
     };
 
     map.on("click", onMapClick);
-    return () => {
-      map.remove();
-    };
+    return () => {};
   }, []);
 
   return <div id="map" style={{ height: "100vh" }} />;
