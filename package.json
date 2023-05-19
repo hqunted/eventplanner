@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@heroicons/react": "^2.0.18",
     "@react-google-maps/api": "^2.18.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -12,6 +13,8 @@
     "@types/node": "^16.18.29",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
+    "classnames": "^2.3.2",
+    "heroicons": "^2.0.18",
     "leaflet": "^1.9.3",
     "query-string": "^8.1.0",
     "react": "^18.2.0",

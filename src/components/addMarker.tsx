@@ -1,6 +1,11 @@
 import { readUrlParams } from "./readUrlParams";
 import L from "leaflet";
 
+const generateGoogleMapsLink = (latitude: number, longitude: number) => {
+  const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+  console.log(mapsLink);
+  return mapsLink;
+};
 export const addMarker = (
   lat: number,
   lng: number,
@@ -13,9 +18,10 @@ export const addMarker = (
   if (readUrlParams())
     L.marker([lat, lng], { icon: customIcon })
       .bindPopup(
-        `<b>Title:</b>${title}<br><b>Description:</b> ${description}<br><b>Time:</b> ${time}<br>`
+        `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
+          lat,
+          lng
+        )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br>`
       )
       .addTo(map);
-
-  console.log(lat);
 };
