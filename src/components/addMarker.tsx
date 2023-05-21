@@ -13,12 +13,13 @@ export const addMarker = (
   customIcon: L.Icon,
   title?: any,
   description?: any,
-  time?: any
+  time?: any,
+  date?: any
 ) => {
   if (readUrlParams())
     L.marker([lat, lng], { icon: customIcon })
       .bindPopup(
-        `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
+        `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${date}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
           lat,
           lng
         )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br>`
