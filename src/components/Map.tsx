@@ -9,18 +9,6 @@ export const Map = () => {
   const [pickedEvents, setPickedEvents] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const generateGoogleMapsLink = (latitude: number, longitude: number) => {
-    const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-    console.log(mapsLink);
-    return mapsLink;
-  };
-  const modalIsVisible = () => {
-    setModalVisible(true);
-  };
-  const modalIsInvisible = () => {
-    setModalVisible(false);
-  };
-
   const latString = readUrlParams()?.lat;
   const lngString = readUrlParams()?.lng;
   const urlTitle = readUrlParams()?.title;
@@ -28,6 +16,20 @@ export const Map = () => {
   const urlTime = readUrlParams()?.time;
   const urlLat = Number(latString);
   const urlLng = Number(lngString);
+  const urlDate = readUrlParams()?.date;
+
+  const generateGoogleMapsLink = (latitude: number, longitude: number) => {
+    const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    console.log(mapsLink);
+    return mapsLink;
+  };
+
+  const modalIsVisible = () => {
+    setModalVisible(true);
+  };
+  const modalIsInvisible = () => {
+    setModalVisible(false);
+  };
 
   useEffect(() => {
     const map = L.map("map").setView([0, 0], 12);
@@ -68,7 +70,8 @@ export const Map = () => {
       customIcon,
       urlTitle,
       urlDescription,
-      urlTime
+      urlTime,
+      urlDate
     );
 
     const onMapClick = (pickedLocation: LeafletMouseEvent) => {
@@ -76,12 +79,13 @@ export const Map = () => {
 
       pickedLocation ? modalIsVisible() : modalIsInvisible();
 
-      const title = prompt("Enter Title:") || "";
-      const description = prompt("Enter description:") || "";
-      const time = prompt("Enter time:") || "";
+      const title = prompt("Title of the activity:");
+      const description = prompt("Description of the activity:");
+      const time = prompt("Time of the activity:");
+      const date = prompt("Date of the activity:");
 
-      if (title && description && time) {
-        const event = `${title}|${description}|${time}`;
+      if (title && description && time && date) {
+        const event = `${title}|${description}|${time}|${date}`;
         const updatedPickedEvents = [...pickedEvents, event];
 
         setPickedEvents(updatedPickedEvents);
@@ -95,7 +99,7 @@ export const Map = () => {
 
         L.marker([lat, lng], { icon: customIcon })
           .bindPopup(
-            `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
+            `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${date}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
               lat,
               lng
             )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br>`
@@ -111,7 +115,7 @@ export const Map = () => {
   return (
     <div id="map" style={{ height: "100vh" }}>
       <div
-        className={classNames(`${modalVisible ? "absolute" : ""} inset-0`)}
+        className={classNames(`${modalVisible ? "absolute" : ""} inset-0 `)}
         style={{ zIndex: 999 }}
       >
         {mainModal()}

@@ -9,7 +9,8 @@ export const readUrlParams = () => {
     const title = events[0];
     const description = events[1];
     const time = events[2];
+    const date = events[3];
 
-    return { title, description, time, lng, lat };
+    return { title, description, time, lng, lat, date };
   }
 };

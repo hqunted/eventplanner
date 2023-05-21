@@ -1,105 +1,95 @@
 const mainModal = () => {
   return (
-    <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <img
-            className="mx-auto h-12 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-            alt="Workflow"
-          />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{" "}
-            <a
-              href="#"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              start your 14-day free trial
-            </a>
-          </p>
-        </div>
-        <form className="mt-8 space-y-6" action="#" method="POST">
+    <div className=" min-h-full bg-green-600 opacity-95  flex items-center justify-center sm:px-6 lg:px-8 ">
+      <div className="absolute max-w-md w-full bg-green-700  space-y-8 rounded-xl">
+        <form className="mt-8 space-y-6" action={`./Map.tsx?`} method="POST">
           <input type="hidden" name="remember" defaultValue="true" />
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-md shadow-sm -space-y-px opacity-100">
             <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
+              <label htmlFor="Title" className="sr-only">
+                Title
               </label>
               <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
+                id="Title"
+                name="title"
+                type="title"
+                autoComplete="title"
                 required
                 className="appearance-none rounded-none relative block
                   w-full px-3 py-2 border border-gray-300
                   placeholder-gray-500 text-gray-900 rounded-t-md
-                  focus:outline-none focus:ring-indigo-500
-                  focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                  focus:outline-none focus:ring-green-500
+                  focus:border-green-500 focus:z-10 sm:text-sm"
+                placeholder="Please enter the Title of your activity"
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">
-                Password
+              <label htmlFor="description" className="sr-only">
+                Description
               </label>
               <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
+                id="description"
+                name="description"
+                type="description"
+                autoComplete="description"
+                required
+                className="appearance-none rounded-none relative block
+                  w-full px-3 py-2 border border-gray-300
+                  placeholder-gray-500 text-gray-900 rounded-t-md
+                  focus:outline-none focus:ring-green-500
+                  focus:border-green-500 focus:z-10 sm:text-sm"
+                placeholder="Please enter the description of your activity"
+              />
+            </div>
+            <div>
+              <label htmlFor="date" className="sr-only">
+                Date
+              </label>
+              <input
+                id="date"
+                name="date"
+                type="date"
+                autoComplete="current-date"
                 required
                 className="appearance-none rounded-none relative block
                   w-full px-3 py-2 border border-gray-300
                   placeholder-gray-500 text-gray-900 rounded-b-md
-                  focus:outline-none focus:ring-indigo-500
-                  focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                  focus:outline-none focus:ring-green-500
+                  focus:border-green-500 focus:z-10 sm:text-sm"
+                placeholder="Date"
               />
             </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500
-                  border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
+            <div>
+              <label htmlFor="time" className="sr-only">
+                Time
               </label>
-            </div>
-
-            <div className="text-sm">
-              <a
-                href="#"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Forgot your password?
-              </a>
+              <input
+                id="time"
+                name="time"
+                type="time"
+                autoComplete="current-time"
+                required
+                className="appearance-none rounded-none relative block
+                  w-full px-3 py-2 border border-gray-300
+                  placeholder-gray-500 text-gray-900 rounded-b-md
+                  focus:outline-none focus:ring-green-500
+                  focus:border-green-500 focus:z-10 sm:text-sm"
+                placeholder="Time"
+              />
             </div>
           </div>
 
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center
+              className="group relative w-1/2 flex justify-center mx-auto mb-2
                 py-2 px-4 border border-transparent text-sm font-medium
-                rounded-md text-white bg-indigo-600 hover:bg-indigo-700
+                rounded-md text-white bg-green-500 hover:bg-green-600
                 focus:outline-none focus:ring-2 focus:ring-offset-2
-                focus:ring-indigo-500"
+                focus:ring-green-500"
             >
-              <span className="absolute left-0 inset-y-0 flex items-center pl-3"></span>
-              Sign in
+              <span className="absolute left-0 inset-y-0 flex items-center pl-3 "></span>
+              Publish
             </button>
           </div>
         </form>
