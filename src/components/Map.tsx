@@ -1,13 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import L, { LeafletMouseEvent } from "leaflet";
 import { addMarker } from "./addMarker";
 import { readUrlParams } from "./readUrlParams";
-import mainModal from "./mainModal";
+import MainModal from "./MainModal";
 import classNames from "classnames";
 
 export const Map = () => {
   const [pickedEvents, setPickedEvents] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const formDataRef = useRef({
+    title: "",
+    description: "",
+    date: "",
+    time: "",
+  });
 
   const latString = readUrlParams()?.lat;
   const lngString = readUrlParams()?.lng;
@@ -24,11 +30,20 @@ export const Map = () => {
     return mapsLink;
   };
 
-  const modalIsVisible = () => {
-    setModalVisible(true);
-  };
-  const modalIsInvisible = () => {
-    setModalVisible(false);
+  const handleFormSubmit = (data: {
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+  }) => {
+    // Do something with the data
+    console.log("Title:", data.title);
+    console.log("Description:", data.description);
+    console.log("Date:", data.date);
+    console.log("Time:", data.time);
+
+    // Update the formDataRef
+    formDataRef.current = data;
   };
 
   useEffect(() => {
@@ -74,28 +89,25 @@ export const Map = () => {
       urlDate
     );
 
-    const onMapClick = (pickedLocation: LeafletMouseEvent) => {
-      const { lat, lng } = pickedLocation.latlng;
+    const onMapClick = (event: LeafletMouseEvent) => {
+      const { lat, lng } = event.latlng;
 
-      pickedLocation ? modalIsVisible() : modalIsInvisible();
+      setModalVisible(true); // Show the modal
 
-      const title = prompt("Title of the activity:");
-      const description = prompt("Description of the activity:");
-      const time = prompt("Time of the activity:");
-      const date = prompt("Date of the activity:");
-
+      const { title, description, date, time } = formDataRef.current; // Access the form data from the ref
+      console.log(title);
       if (title && description && time && date) {
-        const event = `${title}|${description}|${time}|${date}`;
-        const updatedPickedEvents = [...pickedEvents, event];
+        const eventString = `${title}|${description}|${time}|${date}`;
+        const updatedPickedEvents = [...pickedEvents, eventString];
 
         setPickedEvents(updatedPickedEvents);
+
         const queryParams = new URLSearchParams({
           events: updatedPickedEvents.join(","),
           lat: String(lat),
           lng: String(lng),
         }).toString();
         const url = `${window.location.origin}${window.location.pathname}?${queryParams}`;
-        window.prompt("Copy the shareable URL:", url);
 
         L.marker([lat, lng], { icon: customIcon })
           .bindPopup(
@@ -109,8 +121,19 @@ export const Map = () => {
     };
 
     map.on("click", onMapClick);
-    return () => {};
+
+    return () => {
+      map.off("click", onMapClick);
+      map.remove();
+    };
   }, []);
+
+  const modalIsVisible = () => {
+    setModalVisible(true);
+  };
+  const modalIsInvisible = () => {
+    setModalVisible(false);
+  };
 
   return (
     <div id="map" style={{ height: "100vh" }}>
@@ -118,7 +141,7 @@ export const Map = () => {
         className={classNames(`${modalVisible ? "absolute" : ""} inset-0 `)}
         style={{ zIndex: 999 }}
       >
-        {mainModal()}
+        <MainModal handleFormSubmit={handleFormSubmit} />
       </div>
     </div>
   );
