@@ -1,94 +1,129 @@
-const mainModal = () => {
+import React, { ChangeEvent, FormEvent, useState } from "react";
+
+interface MainModalProps {
+  handleFormSubmit: (data: {
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+  }) => void;
+}
+
+const MainModal = ({ handleFormSubmit }: MainModalProps) => {
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [time, setTime] = useState<string>("");
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    if (name === "title") {
+      setTitle(value);
+    } else if (name === "description") {
+      setDescription(value);
+    } else if (name === "date") {
+      setDate(value);
+    } else if (name === "time") {
+      setTime(value);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleFormSubmit({ title, description, date, time });
+  };
+
   return (
-    <div className=" min-h-full bg-green-600 opacity-95  flex items-center justify-center sm:px-6 lg:px-8 ">
-      <div className="absolute max-w-md w-full bg-green-700  space-y-8 rounded-xl">
-        <form className="mt-8 space-y-6" action={`./Map.tsx?`} method="POST">
+    <div className="min-h-screen bg-gray-800 opacity-95 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white rounded-xl overflow-hidden shadow-lg">
+        <form className="p-8 space-y-6" onSubmit={handleSubmit}>
           <input type="hidden" name="remember" defaultValue="true" />
-          <div className="rounded-md shadow-sm -space-y-px opacity-100">
+          <div className="space-y-4">
             <div>
-              <label htmlFor="Title" className="sr-only">
+              <label
+                htmlFor="title"
+                className="block text-gray-700 font-medium"
+              >
                 Title
               </label>
               <input
-                id="Title"
+                id="title"
                 name="title"
-                type="title"
-                autoComplete="title"
+                type="text"
+                autoComplete="off"
                 required
-                className="appearance-none rounded-none relative block
-                  w-full px-3 py-2 border border-gray-300
-                  placeholder-gray-500 text-gray-900 rounded-t-md
-                  focus:outline-none focus:ring-green-500
-                  focus:border-green-500 focus:z-10 sm:text-sm"
+                onChange={handleChange}
+                value={title}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                 placeholder="Please enter the Title of your activity"
               />
             </div>
             <div>
-              <label htmlFor="description" className="sr-only">
+              <label
+                htmlFor="description"
+                className="block text-gray-700 font-medium"
+              >
                 Description
               </label>
-              <input
+              <textarea
                 id="description"
                 name="description"
-                type="description"
-                autoComplete="description"
+                autoComplete="off"
                 required
-                className="appearance-none rounded-none relative block
-                  w-full px-3 py-2 border border-gray-300
-                  placeholder-gray-500 text-gray-900 rounded-t-md
-                  focus:outline-none focus:ring-green-500
-                  focus:border-green-500 focus:z-10 sm:text-sm"
+                rows={4}
+                onChange={handleChange}
+                value={description}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                 placeholder="Please enter the description of your activity"
-              />
+              ></textarea>
             </div>
-            <div>
-              <label htmlFor="date" className="sr-only">
-                Date
-              </label>
-              <input
-                id="date"
-                name="date"
-                type="date"
-                autoComplete="current-date"
-                required
-                className="appearance-none rounded-none relative block
-                  w-full px-3 py-2 border border-gray-300
-                  placeholder-gray-500 text-gray-900 rounded-b-md
-                  focus:outline-none focus:ring-green-500
-                  focus:border-green-500 focus:z-10 sm:text-sm"
-                placeholder="Date"
-              />
-            </div>
-            <div>
-              <label htmlFor="time" className="sr-only">
-                Time
-              </label>
-              <input
-                id="time"
-                name="time"
-                type="time"
-                autoComplete="current-time"
-                required
-                className="appearance-none rounded-none relative block
-                  w-full px-3 py-2 border border-gray-300
-                  placeholder-gray-500 text-gray-900 rounded-b-md
-                  focus:outline-none focus:ring-green-500
-                  focus:border-green-500 focus:z-10 sm:text-sm"
-                placeholder="Time"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="date"
+                  className="block text-gray-700 font-medium"
+                >
+                  Date
+                </label>
+                <input
+                  id="date"
+                  name="date"
+                  type="date"
+                  autoComplete="off"
+                  required
+                  onChange={handleChange}
+                  value={date}
+                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="time"
+                  className="block text-gray-700 font-medium"
+                >
+                  Time
+                </label>
+                <input
+                  id="time"
+                  name="time"
+                  type="time"
+                  autoComplete="off"
+                  required
+                  onChange={handleChange}
+                  value={time}
+                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                />
+              </div>
             </div>
           </div>
 
-          <div>
+          <div className="flex justify-center">
             <button
               type="submit"
-              className="group relative w-1/2 flex justify-center mx-auto mb-2
-                py-2 px-4 border border-transparent text-sm font-medium
-                rounded-md text-white bg-green-500 hover:bg-green-600
-                focus:outline-none focus:ring-2 focus:ring-offset-2
-                focus:ring-green-500"
+              className="w-full py-2 px-4 mt-6 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
-              <span className="absolute left-0 inset-y-0 flex items-center pl-3 "></span>
               Publish
             </button>
           </div>
@@ -97,4 +132,5 @@ const mainModal = () => {
     </div>
   );
 };
-export default mainModal;
+
+export default MainModal;
