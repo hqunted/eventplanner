@@ -8,6 +8,7 @@ import classNames from "classnames";
 export const Map = () => {
   const [pickedEvents, setPickedEvents] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+
   const formDataRef = useRef({
     title: "",
     description: "",
@@ -91,11 +92,15 @@ export const Map = () => {
 
     const onMapClick = (event: LeafletMouseEvent) => {
       const { lat, lng } = event.latlng;
-
-      setModalVisible(true); // Show the modal
-
+      console.log(formDataRef.current.title === "");
+      // Show the modal
+      if (formDataRef.current.title === "") {
+        setModalVisible(true);
+      } else {
+        setModalVisible(false);
+      }
       const { title, description, date, time } = formDataRef.current; // Access the form data from the ref
-      console.log(title);
+
       if (title && description && time && date) {
         const eventString = `${title}|${description}|${time}|${date}`;
         const updatedPickedEvents = [...pickedEvents, eventString];
@@ -108,13 +113,12 @@ export const Map = () => {
           lng: String(lng),
         }).toString();
         const url = `${window.location.origin}${window.location.pathname}?${queryParams}`;
-
         L.marker([lat, lng], { icon: customIcon })
           .bindPopup(
             `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${date}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
               lat,
               lng
-            )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br>`
+            )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${url}<br>`
           )
           .addTo(map);
       }
@@ -127,13 +131,6 @@ export const Map = () => {
       map.remove();
     };
   }, []);
-
-  const modalIsVisible = () => {
-    setModalVisible(true);
-  };
-  const modalIsInvisible = () => {
-    setModalVisible(false);
-  };
 
   return (
     <div id="map" style={{ height: "100vh" }}>
