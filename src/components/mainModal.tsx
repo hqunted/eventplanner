@@ -130,7 +130,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
             <button
               type="submit"
               onClick={() => {
-                setModalVisibility("opacity-0");
+                setModalVisibility("invisible");
               }}
               className="w-full py-2 px-4 mt-6 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
