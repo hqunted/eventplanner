@@ -1,4 +1,5 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import classNames from "classnames";
+import React, { ChangeEvent, useState } from "react";
 
 interface MainModalProps {
   handleFormSubmit: (data: {
@@ -14,6 +15,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [time, setTime] = useState<string>("");
+  const [modalVisibility, setModalVisibility] = useState("");
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -36,7 +38,12 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-800 opacity-95 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div
+      className={classNames(
+        "min-h-screen bg-gray-800 flex items-center justify-center px-4 sm:px-6 lg:px-8",
+        modalVisibility
+      )}
+    >
       <div className="max-w-md w-full bg-white rounded-xl overflow-hidden shadow-lg">
         <form className="p-8 space-y-6" onSubmit={handleSubmit}>
           <input type="hidden" name="remember" defaultValue="true" />
@@ -122,6 +129,9 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
           <div className="flex justify-center">
             <button
               type="submit"
+              onClick={() => {
+                setModalVisibility("opacity-0");
+              }}
               className="w-full py-2 px-4 mt-6 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               Publish
