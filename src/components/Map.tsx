@@ -4,12 +4,12 @@ import { addMarker } from "./addMarker";
 import { readUrlParams } from "./readUrlParams";
 import MainModal from "./MainModal";
 import classNames from "classnames";
-import { useOnMapClick } from "../hooks/useOnMapClick";
 
 export const Map = () => {
   const [pickedEvents, setPickedEvents] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const { modalStatus, setModalStatus } = useOnMapClick();
+  const [markerData, setMarkerData] = useState();
+
   const formDataRef = useRef({
     title: "",
     description: "",
@@ -82,7 +82,8 @@ export const Map = () => {
       attribution:
         'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
     }).addTo(map);
-    addMarker(
+
+    const urlMarker = addMarker(
       urlLat,
       urlLng,
       map,
@@ -96,7 +97,7 @@ export const Map = () => {
     const onMapClick = (event: LeafletMouseEvent) => {
       const { lat, lng } = event.latlng;
       console.log(event);
-      // Show the modal
+
       if (formDataRef.current.title === "") {
         setModalVisible(true);
       } else {
@@ -104,19 +105,20 @@ export const Map = () => {
       }
 
       const { title, description, date, time, publishClicked } =
-        formDataRef.current; // Access the form data from the ref
+        formDataRef.current;
       const eventString = `${title}|${description}|${time}|${date}`;
       const updatedPickedEvents = [...pickedEvents, eventString];
 
       setPickedEvents(updatedPickedEvents);
-      if (publishClicked) {
+
+      if (publishClicked && !modalVisible) {
         const queryParams = new URLSearchParams({
           events: updatedPickedEvents.join(","),
           lat: String(lat),
           lng: String(lng),
         }).toString();
         const url = `${window.location.origin}${window.location.pathname}?${queryParams}`;
-        L.marker([lat, lng], { icon: customIcon })
+        const newMarker = L.marker([lat, lng], { icon: customIcon })
           .addTo(map)
           .bindPopup(
             `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${date}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
@@ -124,12 +126,16 @@ export const Map = () => {
               lng
             )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${url}<br>`
           );
-        map.off("click", onMapClick);
+
+        if (urlTitle !== "" && urlMarker) {
+          map.removeLayer(urlMarker);
+        }
       }
     };
 
     map.on("click", onMapClick);
     return () => {
+      map.on("click", onMapClick);
       map.remove();
     };
   }, []);
@@ -137,7 +143,9 @@ export const Map = () => {
   return (
     <div id="map" style={{ height: "100vh" }}>
       <div
-        className={classNames(`${modalVisible ? "absolute" : ""} inset-0 `)}
+        className={classNames(
+          `${modalVisible ? "visible" : "invisible"} absolute inset-0 `
+        )}
         style={{ zIndex: 999 }}
       >
         <MainModal handleFormSubmit={handleFormSubmit} />
