@@ -1,5 +1,7 @@
 import classNames from "classnames";
 import React, { ChangeEvent, useState } from "react";
+import { addMarker } from "./addMarker";
+import { useOnMapClick } from "../hooks/useOnMapClick";
 
 interface MainModalProps {
   handleFormSubmit: (data: {
@@ -7,6 +9,7 @@ interface MainModalProps {
     description: string;
     date: string;
     time: string;
+    publishClicked: boolean;
   }) => void;
 }
 
@@ -15,6 +18,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [time, setTime] = useState<string>("");
+  const [publishClicked, setPublishClicked] = useState(false);
   const [modalVisibility, setModalVisibility] = useState("");
 
   const handleChange = (
@@ -34,7 +38,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleFormSubmit({ title, description, date, time });
+    handleFormSubmit({ title, description, date, time, publishClicked });
   };
 
   return (
@@ -86,7 +90,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
                 placeholder="Please enter the description of your activity"
               ></textarea>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
                   htmlFor="date"
@@ -131,6 +135,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
               type="submit"
               onClick={() => {
                 setModalVisibility("invisible");
+                setPublishClicked(true);
               }}
               className="w-full py-2 px-4 mt-6 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
