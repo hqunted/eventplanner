@@ -1,7 +1,5 @@
 import classNames from "classnames";
 import React, { ChangeEvent, useState } from "react";
-import { addMarker } from "./addMarker";
-import { useOnMapClick } from "../hooks/useOnMapClick";
 
 interface MainModalProps {
   handleFormSubmit: (data: {
@@ -35,21 +33,41 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
       setTime(value);
     }
   };
-
+  const isFormValid =
+    title !== "" && description !== "" && date !== "" && time !== "";
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleFormSubmit({ title, description, date, time, publishClicked });
   };
 
+  const handlePublishClick = () => {
+    setPublishClicked(true);
+    setModalVisibility("invisible");
+  };
+
+  const handleCloseClick = () => {
+    setModalVisibility("invisible");
+  };
+
   return (
     <div
       className={classNames(
-        "min-h-screen bg-gray-800 flex items-center justify-center px-4 sm:px-6 lg:px-8",
+        "min-h-screen bg-gray-700 flex items-center opacity-95 justify-center px-4 sm:px-6 lg:px-8",
         modalVisibility
       )}
     >
       <div className="max-w-md w-full bg-white rounded-xl overflow-hidden shadow-lg">
-        <form className="p-8 space-y-6" onSubmit={handleSubmit}>
+        <div className="flex justify-end pr-2">
+          <button
+            type="button"
+            onClick={handleCloseClick}
+            className="p-2 text-gray-500 hover:text-green-700 focus:outline-none text-lg"
+          >
+            x
+          </button>
+        </div>
+
+        <form className="p-8 pt-4 space-y-6" onSubmit={handleSubmit}>
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="space-y-4">
             <div>
@@ -129,17 +147,20 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
               </div>
             </div>
           </div>
-
+          <label htmlFor="time" className="block text-green-500 font-medium">
+            (After clicking the button. Please click on the map to choose the
+            location of your event.)
+          </label>
           <div className="flex justify-center">
             <button
               type="submit"
+              disabled={!isFormValid}
               onClick={() => {
-                setModalVisibility("invisible");
-                setPublishClicked(true);
+                handlePublishClick();
               }}
-              className="w-full py-2 px-4 mt-6 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              className=" w-full py-2 px-4 mt-6 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
-              Publish
+              Choose the location
             </button>
           </div>
         </form>
