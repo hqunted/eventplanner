@@ -33,6 +33,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
       setTime(value);
     }
   };
+
   const isFormValid =
     title !== "" && description !== "" && date !== "" && time !== "";
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -46,7 +47,9 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
   };
 
   const handleCloseClick = () => {
-    setModalVisibility("invisible");
+    if (!publishClicked) {
+      setModalVisibility("invisible");
+    }
   };
 
   return (
