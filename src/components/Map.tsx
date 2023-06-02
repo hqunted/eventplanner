@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import L, { LeafletMouseEvent } from "leaflet";
+import L, { LeafletMouseEvent, marker, Layer } from "leaflet";
 import { addMarker } from "./addMarker";
 import { readUrlParams } from "./readUrlParams";
 import MainModal from "./MainModal";
 import classNames from "classnames";
+import { Marker } from "leaflet";
 
 export const Map = () => {
   const [pickedEvents, setPickedEvents] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [markerData, setMarkerData] = useState();
+  const [markerData, setMarkerData] = useState<Marker<any> | undefined>();
 
   const formDataRef = useRef({
     title: "",
@@ -40,15 +41,19 @@ export const Map = () => {
     time: string;
     publishClicked: boolean;
   }) => {
-    // Do something with the data
     console.log("Title:", data.title);
     console.log("Description:", data.description);
     console.log("Date:", data.date);
     console.log("Time:", data.time);
 
-    // Update the formDataRef
     formDataRef.current = data;
   };
+
+  const customIcon = L.icon({
+    iconUrl: require("../assets/icons8-marker.gif"),
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  });
 
   useEffect(() => {
     const map = L.map("map").setView([0, 0], 12);
@@ -72,12 +77,6 @@ export const Map = () => {
       console.error("Geolocation is not supported by this browser.");
     }
 
-    const customIcon = L.icon({
-      iconUrl: require("../assets/icons8-marker.gif"),
-      iconSize: [24, 24],
-      iconAnchor: [12, 12],
-    });
-
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
         'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
@@ -95,8 +94,7 @@ export const Map = () => {
     );
 
     const onMapClick = (event: LeafletMouseEvent) => {
-      const { lat, lng } = event.latlng;
-      console.log(event);
+      let { lat, lng } = event.latlng;
 
       if (formDataRef.current.title === "") {
         setModalVisible(true);
@@ -104,7 +102,7 @@ export const Map = () => {
         setModalVisible(false);
       }
 
-      const { title, description, date, time, publishClicked } =
+      let { title, description, date, time, publishClicked } =
         formDataRef.current;
       const eventString = `${title}|${description}|${time}|${date}`;
       const updatedPickedEvents = [...pickedEvents, eventString];
@@ -118,8 +116,17 @@ export const Map = () => {
           lng: String(lng),
         }).toString();
         const url = `${window.location.origin}${window.location.pathname}?${queryParams}`;
-        const newMarker = L.marker([lat, lng], { icon: customIcon })
+
+        const newMarker = L.marker([lat, lng], {
+          icon: customIcon,
+          draggable: true,
+        })
           .addTo(map)
+
+          .on("dragend", (event) => {
+            const marker = event.target;
+            const position = marker.getLatLng();
+          })
           .bindPopup(
             `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${date}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
               lat,
