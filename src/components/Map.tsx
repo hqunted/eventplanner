@@ -94,7 +94,7 @@ export const Map = () => {
     );
 
     const onMapClick = (event: LeafletMouseEvent) => {
-      let { lat, lng } = event.latlng;
+      const { lat, lng } = event.latlng;
 
       if (formDataRef.current.title === "") {
         setModalVisible(true);
@@ -102,7 +102,7 @@ export const Map = () => {
         setModalVisible(false);
       }
 
-      let { title, description, date, time, publishClicked } =
+      const { title, description, date, time, publishClicked } =
         formDataRef.current;
       const eventString = `${title}|${description}|${time}|${date}`;
       const updatedPickedEvents = [...pickedEvents, eventString];
@@ -117,7 +117,7 @@ export const Map = () => {
         }).toString();
         const url = `${window.location.origin}${window.location.pathname}?${queryParams}`;
 
-        const newMarker = L.marker([lat, lng], {
+        L.marker([lat, lng], {
           icon: customIcon,
           draggable: true,
         })
@@ -133,6 +133,7 @@ export const Map = () => {
               lng
             )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${url}<br>`
           );
+        map.off("click", onMapClick);
 
         if (urlTitle !== "" && urlMarker) {
           map.removeLayer(urlMarker);
