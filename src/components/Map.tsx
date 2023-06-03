@@ -63,7 +63,7 @@ export const Map = () => {
   };
 
   const customIcon = L.icon({
-    iconUrl: require("../assets/newmarker.png"),
+    iconUrl: require("../assets/markerl.png"),
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   });
