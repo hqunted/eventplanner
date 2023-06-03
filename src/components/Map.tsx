@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import L, { LeafletMouseEvent, marker, Layer } from "leaflet";
+import L, { LeafletMouseEvent } from "leaflet";
 import { addMarker } from "./addMarker";
 import { readUrlParams } from "./readUrlParams";
 import MainModal from "./MainModal";
 import classNames from "classnames";
-import { Marker } from "leaflet";
 
 export const Map = () => {
   const [pickedEvents, setPickedEvents] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [markerData, setMarkerData] = useState<Marker<any> | undefined>();
 
+  const draggedMarkerDataRef = useRef({ lat: 0, lng: 0 });
   const formDataRef = useRef({
     title: "",
     description: "",
@@ -18,6 +17,20 @@ export const Map = () => {
     time: "",
     publishClicked: false,
   });
+
+  const handleGenerateUrl = (
+    updatedPickedEvents: any,
+    lat: number,
+    lng: number
+  ) => {
+    const queryParams = new URLSearchParams({
+      events: updatedPickedEvents.join(","),
+      lat: String(lat),
+      lng: String(lng),
+    }).toString();
+
+    return `${window.location.origin}${window.location.pathname}?${queryParams}`;
+  };
 
   const latString = readUrlParams()?.lat;
   const lngString = readUrlParams()?.lng;
@@ -50,13 +63,21 @@ export const Map = () => {
   };
 
   const customIcon = L.icon({
-    iconUrl: require("../assets/icons8-marker.gif"),
+    iconUrl: require("../assets/newmarker.png"),
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   });
 
   useEffect(() => {
     const map = L.map("map").setView([0, 0], 12);
+
+    const handleBackgroundMap = () => {
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+      }).addTo(map);
+    };
+    handleBackgroundMap();
 
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -76,11 +97,6 @@ export const Map = () => {
     } else {
       console.error("Geolocation is not supported by this browser.");
     }
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-    }).addTo(map);
 
     const urlMarker = addMarker(
       urlLat,
@@ -110,30 +126,43 @@ export const Map = () => {
       setPickedEvents(updatedPickedEvents);
 
       if (publishClicked && !modalVisible) {
-        const queryParams = new URLSearchParams({
-          events: updatedPickedEvents.join(","),
-          lat: String(lat),
-          lng: String(lng),
-        }).toString();
-        const url = `${window.location.origin}${window.location.pathname}?${queryParams}`;
-
-        L.marker([lat, lng], {
+        const marker = L.marker([lat, lng], {
           icon: customIcon,
           draggable: true,
-        })
-          .addTo(map)
+        }).addTo(map);
 
-          .on("dragend", (event) => {
-            const marker = event.target;
-            const position = marker.getLatLng();
-          })
-          .bindPopup(
+        marker.bindPopup(
+          `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${date}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
+            lat,
+            lng
+          )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${handleGenerateUrl(
+            updatedPickedEvents,
+            lat,
+            lng
+          )}<br>`
+        );
+        marker.on("dragend", (event) => {
+          const marker = event.target;
+          const position = marker.getLatLng();
+          draggedMarkerDataRef.current = position;
+
+          marker.bindPopup(
             `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${date}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
-              lat,
-              lng
-            )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${url}<br>`
+              draggedMarkerDataRef.current.lat,
+              draggedMarkerDataRef.current.lng
+            )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${handleGenerateUrl(
+              updatedPickedEvents,
+              draggedMarkerDataRef.current.lat,
+              draggedMarkerDataRef.current.lng
+            )}<br>`
           );
-        map.off("click", onMapClick);
+        });
+
+        if (formDataRef.current.title) {
+          map.off("click", onMapClick);
+        } else {
+          map.on("click", onMapClick);
+        }
 
         if (urlTitle !== "" && urlMarker) {
           map.removeLayer(urlMarker);
@@ -152,7 +181,7 @@ export const Map = () => {
     <div id="map" style={{ height: "100vh" }}>
       <div
         className={classNames(
-          `${modalVisible ? "visible" : "invisible"} absolute inset-0 `
+          `${modalVisible ? "visible" : "invisible"}  absolute inset-0 `
         )}
         style={{ zIndex: 999 }}
       >
