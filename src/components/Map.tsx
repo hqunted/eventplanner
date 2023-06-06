@@ -56,7 +56,7 @@ export const Map = () => {
       return 64;
     }
     if (resolution > 1280) {
-      return 32;
+      return 28;
     }
     return 24;
   };
