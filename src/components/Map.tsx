@@ -40,11 +40,25 @@ export const Map = () => {
   const urlLat = Number(latString);
   const urlLng = Number(lngString);
   const urlDate = readUrlParams()?.date;
+  const resolution = window.innerWidth;
 
   const generateGoogleMapsLink = (latitude: number, longitude: number) => {
     const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
     console.log(mapsLink);
     return mapsLink;
+  };
+
+  const handleResolution = () => {
+    if (resolution < 1280 && resolution > 980) {
+      return 24;
+    }
+    if (resolution <= 980) {
+      return 64;
+    }
+    if (resolution > 1280) {
+      return 32;
+    }
+    return 24;
   };
 
   const handleFormSubmit = (data: {
@@ -64,10 +78,10 @@ export const Map = () => {
 
   const customIcon = L.icon({
     iconUrl: require("../assets/markerl.png"),
-    iconSize: [24, 24],
-    iconAnchor: [12, 12],
+    iconSize: [handleResolution(), handleResolution()],
+    iconAnchor: [handleResolution() / 2, handleResolution() / 2],
   });
-
+  console.log(window.innerWidth);
   useEffect(() => {
     const map = L.map("map").setView([0, 0], 12);
 
