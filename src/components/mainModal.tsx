@@ -53,13 +53,13 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
         modalVisibility
       )}
     >
-      <div className=" bg-slate-100 rounded-xl overflow-hidden shadow-lg w-[95%] md:w-[75%] lg:w-[30%]">
+      <div className=" bg-slate-100 rounded-xl overflow-hidden shadow-lg w-[95%] md:w-[85%] lg:w-[30%]">
         <div className="flex justify-end">
           <div className="flex justify-center items-center flex-grow">
             <img
               src={require("../assets/formlogo.png")}
               alt="Form Logo"
-              className="h-96 w-68 pt-16 md:h-72 md:w-56"
+              className="h-96 w-68 pt-16 md:h-72 md:w-56 lg:h-64 lg:w-48"
             />
           </div>
         </div>
@@ -75,7 +75,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
                 htmlFor="title"
                 className="block text-gray-700 font-medium text-5xl sm:mb-4 sm:mt-4 sm:text-5xl md:text-4xl xl:text-sm "
               >
-                Title:
+                Down goes the Title👇:
               </label>
               <input
                 id="title"
@@ -86,7 +86,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
                 onChange={handleChange}
                 value={title}
                 className="appearance-none rounded-md relative block w-full sm:px-8 sm:py-8 lg:py-2 lg:px-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 text-4xl sm:text-5xl md:text-2xl lg:text-sm"
-                placeholder="Please enter the Title of your activity"
+                placeholder="Please enter the title of your adventure"
               />
             </div>
             <div>
@@ -94,7 +94,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
                 htmlFor="description"
                 className="block text-gray-700 font-medium text-5xl sm:mb-4 sm:mt-12 sm:text-5xl md:mb-2 md:mt-6 md:text-4xl lg:text-sm"
               >
-                Description:
+                What are you planning im curious👀👀:
               </label>
               <textarea
                 id="description"
@@ -105,7 +105,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
                 onChange={handleChange}
                 value={description}
                 className="appearance-none rounded-md relative block w-full sm:px-8 sm:py-8 md:mb-2 md:mt-4 lg:py-2 lg:px-2  border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 text-4xl sm:text-5xl md:text-2xl lg:text-sm "
-                placeholder="Please enter the description of your activity"
+                placeholder="Please enter the description of your adventure"
               ></textarea>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-4 ">
@@ -114,7 +114,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
                   htmlFor="date"
                   className="block text-gray-700 font-medium text-5xl sm:mb-4 sm:mt-10 sm:text-5xl md:mb-2 md:mt-4 md:text-4xl lg:text-sm"
                 >
-                  Date:
+                  Picking a date would be nice📅📅:
                 </label>
                 <input
                   id="date"
@@ -132,7 +132,7 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
                   htmlFor="time"
                   className="block text-gray-700 font-medium text-5xl sm:mb-4 sm:mt-10 sm:text-5xl md:mb-2 md:mt-4 md:text-4xl lg:text-sm"
                 >
-                  Time:
+                  Tick tack time passes⏱⏱:
                 </label>
                 <input
                   id="time"

@@ -4,6 +4,8 @@ import { addMarker } from "./addMarker";
 import { readUrlParams } from "./readUrlParams";
 import MainModal from "./MainModal";
 import classNames from "classnames";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const Map = () => {
   const [pickedEvents, setPickedEvents] = useState<string[]>([]);
@@ -72,8 +74,6 @@ export const Map = () => {
     }
   };
 
-  console.log(handleResolution());
-
   const handleFormSubmit = (data: {
     title: string;
     description: string;
@@ -95,7 +95,6 @@ export const Map = () => {
     iconAnchor: [handleResolution() / 2, handleResolution() / 2],
   });
 
-  console.log(window.innerWidth);
   useEffect(() => {
     const map = L.map("map").setView([0, 0], 12);
 
@@ -115,7 +114,9 @@ export const Map = () => {
           map.setView([latitude, longitude], 12);
 
           L.marker([latitude, longitude], { icon: customIcon })
-            .bindPopup(`YOU ARE HERE!`)
+            .bindPopup(
+              `FBI thinks that you are probably around here somewhere...🕵️`
+            )
             .addTo(map);
         },
         (error) => {
@@ -136,7 +137,20 @@ export const Map = () => {
       urlTime,
       urlDate
     );
-
+    toast.info(
+      "Embark on an adventure! Click on the map or me to unveil the details of your extraordinary event! 👉🗺️",
+      {
+        icon: "🚀",
+        position: "top-center",
+        autoClose: 20000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      }
+    );
     const onMapClick = (event: LeafletMouseEvent) => {
       const { lat, lng } = event.latlng;
 
@@ -159,6 +173,17 @@ export const Map = () => {
           draggable: true,
         }).addTo(map);
 
+        toast.info("You can drag the marker as you like 🤏", {
+          position: "top-left",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+
         marker.bindPopup(
           `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${formatDate(
             date
@@ -175,9 +200,11 @@ export const Map = () => {
           const marker = event.target;
           const position = marker.getLatLng();
           draggedMarkerDataRef.current = position;
-          console.log(date);
+
           marker.bindPopup(
-            `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${date}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
+            `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${formatDate(
+              date
+            )}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
               draggedMarkerDataRef.current.lat,
               draggedMarkerDataRef.current.lng
             )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${handleGenerateUrl(
@@ -217,6 +244,18 @@ export const Map = () => {
       >
         <MainModal handleFormSubmit={handleFormSubmit} />
       </div>
+      <ToastContainer
+        position="top-left"
+        autoClose={10000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };
