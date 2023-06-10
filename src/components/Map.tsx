@@ -31,7 +31,19 @@ export const Map = () => {
 
     return `${window.location.origin}${window.location.pathname}?${queryParams}`;
   };
+  const formatDate = (date: string): string => {
+    const dateObj = new Date(date);
+    const day = dateObj.getDate();
+    const month = dateObj.getMonth() + 1; // Month is zero-based, so add 1
+    const year = dateObj.getFullYear();
 
+    // Add leading zeros if necessary
+    const formattedDate = `${day.toString().padStart(2, "0")}.${month
+      .toString()
+      .padStart(2, "0")}.${year}`;
+
+    return formattedDate;
+  };
   const latString = readUrlParams()?.lat;
   const lngString = readUrlParams()?.lng;
   const urlTitle = readUrlParams()?.title;
@@ -49,17 +61,18 @@ export const Map = () => {
   };
 
   const handleResolution = () => {
-    if (resolution < 1280 && resolution > 980) {
+    if (resolution < 1280 && resolution > 981) {
       return 24;
-    }
-    if (resolution <= 980) {
+    } else if (resolution === 980) {
       return 64;
+    } else if (resolution > 980 && resolution < 1280) {
+      return 64;
+    } else {
+      return 28; // Default value for resolutions greater than 1280 or undefined resolution
     }
-    if (resolution > 1280) {
-      return 28;
-    }
-    return 24;
   };
+
+  console.log(handleResolution());
 
   const handleFormSubmit = (data: {
     title: string;
@@ -81,6 +94,7 @@ export const Map = () => {
     iconSize: [handleResolution(), handleResolution()],
     iconAnchor: [handleResolution() / 2, handleResolution() / 2],
   });
+
   console.log(window.innerWidth);
   useEffect(() => {
     const map = L.map("map").setView([0, 0], 12);
@@ -146,7 +160,9 @@ export const Map = () => {
         }).addTo(map);
 
         marker.bindPopup(
-          `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${date}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
+          `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${formatDate(
+            date
+          )}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
             lat,
             lng
           )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${handleGenerateUrl(
@@ -159,7 +175,7 @@ export const Map = () => {
           const marker = event.target;
           const position = marker.getLatLng();
           draggedMarkerDataRef.current = position;
-
+          console.log(date);
           marker.bindPopup(
             `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${date}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
               draggedMarkerDataRef.current.lat,
