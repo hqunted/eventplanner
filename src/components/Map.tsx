@@ -30,16 +30,30 @@ export const Map = () => {
       lat: String(lat),
       lng: String(lng),
     }).toString();
-
+    toast.success(`CLICK ON ME TO COPY THE URL👉👉`, {
+      onClick: () => {
+        navigator.clipboard.writeText(
+          `${window.location.origin}${window.location.pathname}?${queryParams}`
+        );
+      },
+      position: "top-center",
+      autoClose: 10000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
     return `${window.location.origin}${window.location.pathname}?${queryParams}`;
   };
+
   const formatDate = (date: string): string => {
     const dateObj = new Date(date);
     const day = dateObj.getDate();
-    const month = dateObj.getMonth() + 1; // Month is zero-based, so add 1
+    const month = dateObj.getMonth() + 1;
     const year = dateObj.getFullYear();
 
-    // Add leading zeros if necessary
     const formattedDate = `${day.toString().padStart(2, "0")}.${month
       .toString()
       .padStart(2, "0")}.${year}`;
@@ -137,45 +151,28 @@ export const Map = () => {
       urlTime,
       urlDate
     );
-    toast.info(
-      "Embark on an adventure! Click on the map or me to unveil the details of your extraordinary event! 👉🗺️",
-      {
-        icon: "🚀",
-        position: "top-center",
-        autoClose: 20000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      }
-    );
-    const onMapClick = (event: LeafletMouseEvent) => {
-      const { lat, lng } = event.latlng;
 
-      if (formDataRef.current.title === "") {
-        setModalVisible(true);
-      } else {
-        setModalVisible(false);
-      }
-
-      const { title, description, date, time, publishClicked } =
-        formDataRef.current;
-      const eventString = `${title}|${description}|${time}|${date}`;
-      const updatedPickedEvents = [...pickedEvents, eventString];
-
-      setPickedEvents(updatedPickedEvents);
-
-      if (publishClicked && !modalVisible) {
-        const marker = L.marker([lat, lng], {
-          icon: customIcon,
+    if (!urlTitle)
+      toast.info(
+        "Embark on an adventure! Click on the map or me to unveil the details of your extraordinary event! 👉🗺️",
+        {
+          icon: "🚀",
+          position: "top-center",
+          autoClose: 20000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
           draggable: true,
-        }).addTo(map);
-
-        toast.info("You can drag the marker as you like 🤏", {
-          position: "top-left",
-          autoClose: 10000,
+          progress: undefined,
+          theme: "colored",
+        }
+      );
+    setTimeout(() => {
+      if (!formDataRef.current.publishClicked) {
+        toast.info("You have to click on the map you know... 👉🗺️", {
+          icon: "😒",
+          position: "top-center",
+          autoClose: 20000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -183,46 +180,83 @@ export const Map = () => {
           progress: undefined,
           theme: "colored",
         });
+      }
+    }, 10000);
 
-        marker.bindPopup(
-          `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${formatDate(
-            date
-          )}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
-            lat,
-            lng
-          )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${handleGenerateUrl(
-            updatedPickedEvents,
-            lat,
-            lng
-          )}<br>`
-        );
-        marker.on("dragend", (event) => {
-          const marker = event.target;
-          const position = marker.getLatLng();
-          draggedMarkerDataRef.current = position;
+    const onMapClick = (event: LeafletMouseEvent) => {
+      const { lat, lng } = event.latlng;
+
+      if (!urlTitle) {
+        if (formDataRef.current.title === "") {
+          setModalVisible(true);
+        } else {
+          setModalVisible(false);
+        }
+
+        const { title, description, date, time, publishClicked } =
+          formDataRef.current;
+        const eventString = `${title}|${description}|${time}|${date}`;
+        const updatedPickedEvents = [...pickedEvents, eventString];
+
+        setPickedEvents(updatedPickedEvents);
+
+        if (publishClicked && !modalVisible) {
+          const marker = L.marker([lat, lng], {
+            icon: customIcon,
+            draggable: true,
+          }).addTo(map);
+
+          toast.info("You can drag the marker as you like 🤏", {
+            position: "top-left",
+            autoClose: 10000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
 
           marker.bindPopup(
             `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${formatDate(
               date
             )}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
-              draggedMarkerDataRef.current.lat,
-              draggedMarkerDataRef.current.lng
+              lat,
+              lng
             )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${handleGenerateUrl(
               updatedPickedEvents,
-              draggedMarkerDataRef.current.lat,
-              draggedMarkerDataRef.current.lng
+              lat,
+              lng
             )}<br>`
           );
-        });
+          marker.on("dragend", (event) => {
+            const marker = event.target;
+            const position = marker.getLatLng();
+            draggedMarkerDataRef.current = position;
 
-        if (formDataRef.current.title) {
-          map.off("click", onMapClick);
-        } else {
-          map.on("click", onMapClick);
-        }
+            marker.bindPopup(
+              `<b>Title:</b> ${title}<br><b>Description:</b> ${description}<br><br><b>Date:</b> ${formatDate(
+                date
+              )}<br><b>Time:</b> ${time}<br><b>Google Maps link:</b> <a href="${generateGoogleMapsLink(
+                draggedMarkerDataRef.current.lat,
+                draggedMarkerDataRef.current.lng
+              )}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a><br> <b>Url:</b> ${handleGenerateUrl(
+                updatedPickedEvents,
+                draggedMarkerDataRef.current.lat,
+                draggedMarkerDataRef.current.lng
+              )}<br>`
+            );
+          });
 
-        if (urlTitle !== "" && urlMarker) {
-          map.removeLayer(urlMarker);
+          if (formDataRef.current.title) {
+            map.off("click", onMapClick);
+          } else {
+            map.on("click", onMapClick);
+          }
+
+          if (urlTitle !== "" && urlMarker) {
+            map.removeLayer(urlMarker);
+          }
         }
       }
     };
