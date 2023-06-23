@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import L, { LeafletMouseEvent } from "leaflet";
 import { addMarker } from "./addMarker";
 import { readUrlParams } from "./readUrlParams";
-import MainModal from "./MainModal";
+import MainModal from "../components/MainModal";
 import classNames from "classnames";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -266,6 +266,7 @@ export const Map = () => {
       map.on("click", onMapClick);
       map.remove();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
