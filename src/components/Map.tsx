@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import L, { LeafletMouseEvent } from "leaflet";
 import { addMarker } from "./addMarker";
 import { readUrlParams } from "./readUrlParams";
-import MainModal from "../components/MainModal";
+import PlannerModal from "./PlannerModal";
 import classNames from "classnames";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -277,7 +277,7 @@ export const Map = () => {
         )}
         style={{ zIndex: 999 }}
       >
-        <MainModal handleFormSubmit={handleFormSubmit} />
+        <PlannerModal handleFormSubmit={handleFormSubmit} />
       </div>
       <ToastContainer
         position="top-left"

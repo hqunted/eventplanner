@@ -11,7 +11,7 @@ interface MainModalProps {
   }) => void;
 }
 
-const MainModal = ({ handleFormSubmit }: MainModalProps) => {
+const PlannerModal = ({ handleFormSubmit }: MainModalProps) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<string>("");
@@ -168,4 +168,4 @@ const MainModal = ({ handleFormSubmit }: MainModalProps) => {
     </div>
   );
 };
-export default MainModal;
+export default PlannerModal;
